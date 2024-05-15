@@ -1,12 +1,12 @@
 import nonebot
-import tsugu.handler
+import tsugu_async.handler
 from nonebot import require
 from nonebot import on_message
 from nonebot.log import logger
 from nonebot.params import Depends
-from nonebot.utils import run_sync
 from nonebot.adapters import Event, Bot
-from tsugu.config import config as tsugu_config
+from tsugu_async.config import config as tsugu_config
+from tsugu_api_async import settings as tsugu_api_config
 from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 
 require("nonebot_plugin_alconna")
@@ -32,7 +32,7 @@ else:
 __plugin_meta__ = PluginMetadata(
     name="BanG Dream! Tsugu Frontend",
     description="基于 tsugu-python-frontend 的 tsugu-bangdream-bot 插件",
-    usage="\n".join([f"{k}:\n{v}" for k, v in tsugu_config.help_doc_dict.items()]),
+    usage="\n".join([f"{k}:\n{v}" for k, v in tsugu_config._help_doc_dict.items()]),
     type="application",
     homepage="https://github.com/zhaomaoniu/nonebot-plugin-tsugu-frontend",
     config=Config,
@@ -42,12 +42,16 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
+# 更新配置对象
 for key, value in plugin_config_dict.items():
-    if hasattr(tsugu_config, key.replace("tsugu_", "")):
-        setattr(tsugu_config, key.replace("tsugu_", ""), value)
-
-
-tsugu_handler_async = run_sync(tsugu.handler)
+    if key.startswith("tsugu_api_"):
+        attr_name = key.replace("tsugu_api_", "")
+        if hasattr(tsugu_api_config, attr_name):
+            setattr(tsugu_api_config, attr_name, value)
+    elif key.startswith("tsugu_"):
+        attr_name = key.replace("tsugu_", "")
+        if hasattr(tsugu_config, attr_name):
+            setattr(tsugu_config, attr_name, value)
 
 
 async def get_target(event: Event, bot: Bot):
@@ -66,10 +70,10 @@ async def tsugu_handle(
         logger.warning("Failed to get user info")
         return None
 
-    result = await tsugu_handler_async(
+    result = await tsugu_async.handler(
         message=event.get_message().extract_plain_text(),
         user_id=user_info.user_id,
-        platform=plugin_config.tsugu_platform,
+        platform=plugin_config.platform,
         channel_id=(
             target.id if (target.channel or not target.private) else user_info.user_id
         ),

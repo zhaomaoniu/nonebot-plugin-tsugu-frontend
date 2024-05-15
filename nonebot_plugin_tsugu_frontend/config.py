@@ -1,47 +1,87 @@
 from pydantic import BaseModel
+from typing import List, Union, Optional
 
 
 class Config(BaseModel):
-    tsugu_backend: str = "http://tsugubot.com:8080"
-    """Tsugu 后端地址"""
-    tsugu_user_data_backend: str = "http://tsugubot.com:8080"
-    """Tsugu 用户数据后端地址"""
-    tsugu_backend_use_proxy: bool = False
-    """是否使用代理访问 Tsugu 后端"""
-    tsugu_user_data_backend_use_proxy: bool = False
-    """是否使用代理访问 Tsugu 用户数据后端"""
-    tsugu_submit_car_number_use_proxy: bool = False
-    """是否使用代理提交车牌号"""
-    tsugu_verify_player_bind_use_proxy: bool = False
-    """是否使用代理验证玩家绑定, 取决于对 Bestdori 的访问性"""
-    tsugu_proxy_url: str = "http://localhost:7890"
-    """代理地址"""
+    platform: str = "red"
+    """
+    用于绑定/获取玩家数据的平台, 一般 QQ 为 red, 其他平台可能需要根据 Koishi 适配器的具体实现来修改
+    """
+
+    tsugu_api_timeout: int = 10
+    '''
+    请求超时时间
+    '''
+
+    tsugu_api_proxy: str = ''
+    '''
+    代理地址
+    '''
+
+    tsugu_api_backend_url: str = 'http://tsugubot.com:8080'
+    '''
+    后端地址
+    默认为 Tsugu 官方后端，若有自建后端服务器可进行修改。
+    '''
+
+    tsugu_api_backend_proxy: bool = True
+    '''
+    是否使用后端代理
+    当设置代理地址后可修改此项以决定是否使用代理。
+    默认为 True，即使用后端代理。若使用代理时后端服务器无法访问，可将此项设置为 False。
+    '''
+
+    tsugu_api_userdata_backend_url: str = 'http://tsugubot.com:8080'
+    '''
+    用户数据后端地址
+    默认为 Tsugu 官方后端，若有自建后端服务器可进行修改。
+    '''
+
+    tsugu_api_userdata_backend_proxy: bool = True
+    '''
+    是否使用用户数据后端代理
+    当设置代理地址后可修改此项以决定是否使用代理。
+    默认为 True，即使用后端代理。若使用代理时后端服务器无法访问，可将此项设置为 False。
+    '''
+
+    tsugu_api_use_easy_bg: bool = True
+    '''
+    是否使用简易背景，使用可在降低背景质量的前提下加快响应速度。
+    默认为 True，即使用简易背景。若不使用简易背景，可将此项设置为 False。
+    '''
+
+    tsugu_api_compress: bool = True
+    '''
+    是否压缩返回数据，压缩可减少返回数据大小。
+    默认为 True，即压缩返回数据。若不压缩返回数据，可将此项设置为 False。
+    '''
+
+    tsugu_prefix: List[str] = ['/', '']
+    '''
+    命令前缀
+    最后一个参数如果不是空字符串，则只有在命令前缀符合时才会触发命令。
+    '''
+
+    tsugu_allow_gap_less: bool = True
+    '''
+    是否允许命令与参数之间没有空格
+    '''
+
+    tsugu_get_remote_user_data_max_retry: int = 3
+    '''
+    获取远程用户数据最大重试次数
+    '''
+
     tsugu_token_name: str = "Tsugu"
-    """车站 Token 名称"""
+    '''
+    bandori station token
+    '''
     tsugu_bandori_station_token: str = "ZtV4EX2K9Onb"
-    """车站 Token"""
+    '''
+    bandori station token
+    '''
 
-    tsugu_use_easy_bg: bool = True
-    """是否使用简易背景"""
-    tsugu_compress: bool = True
-    """是否压缩图片"""
-    tsugu_platform: str = "red"
-    """用于绑定/获取玩家数据的平台, 一般 QQ 为 red, 其他平台可能需要根据 Koishi 适配器的具体实现来修改"""
-
-    tsugu_ban_gacha_simulate_group_data: list = []
-    """禁止模拟抽卡的群 ID"""
-
-    tsugu_car_number_forwarding: bool = True
-    """是否启用车牌转发"""
-    tsugu_change_main_server: bool = True
-    """是否启用更改主服务器"""
-    tsugu_switch_car_forwarding: bool = True
-    """是否启用切换车牌转发"""
-    tsugu_bind_player: bool = True
-    """是否启用绑定玩家"""
-    tsugu_change_server_list: bool = True
-    """是否启用更改服务器列表"""
-    tsugu_player_status: bool = True
-    """是否启用玩家状态"""
-    tsugu_help: bool = True
-    """是否启用帮助"""
+    tsugu_ban_gacha_simulate_group_data: List = []
+    '''
+    需要关闭模拟抽卡的群
+    '''
