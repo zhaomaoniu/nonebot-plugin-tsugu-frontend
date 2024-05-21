@@ -1,12 +1,11 @@
 import nonebot
-import tsugu_async.handler
+import tsugu.handler_async
 from nonebot import require
 from nonebot import on_message
 from nonebot.log import logger
 from nonebot.params import Depends
 from nonebot.adapters import Event, Bot
-from tsugu_async.config import config as tsugu_config
-from tsugu_api_async import settings as tsugu_api_config
+from tsugu_api_core import settings as tsugu_api_config
 from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 
 require("nonebot_plugin_alconna")
@@ -48,10 +47,6 @@ for key, value in plugin_config_dict.items():
         attr_name = key.replace("tsugu_api_", "")
         if hasattr(tsugu_api_config, attr_name):
             setattr(tsugu_api_config, attr_name, value)
-    elif key.startswith("tsugu_"):
-        attr_name = key.replace("tsugu_", "")
-        if hasattr(tsugu_config, attr_name):
-            setattr(tsugu_config, attr_name, value)
 
 
 async def get_target(event: Event, bot: Bot):
@@ -70,7 +65,7 @@ async def tsugu_handle(
         logger.warning("Failed to get user info")
         return None
 
-    result = await tsugu_async.handler(
+    result = await tsugu.handler_async(
         message=event.get_message().extract_plain_text(),
         user_id=user_info.user_id,
         platform=plugin_config.platform,
