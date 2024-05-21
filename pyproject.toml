@@ -8,7 +8,7 @@ authors = [
 dependencies = [
     "nonebot2>=2.2.1",
     "nonebot-plugin-alconna>=0.42.4",
-    "tsugu>=0.6.0",
+    "tsugu>=2.0.1",
     "nonebot-plugin-userinfo>=0.2.4",
 ]
 requires-python = ">=3.8"
